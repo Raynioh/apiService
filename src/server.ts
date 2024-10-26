@@ -10,12 +10,13 @@ dotenv.config()
 const app = express();
 app.use(express.json());
 
-app.use(cors({
-  origin: 'http://localhost:3050'
-}));
+// app.use(cors({
+//   origin: 'http://localhost:3050'
+// }));
 
-const port = process.env.PORT || 3000;
-const baseURL = `http://localhost:${port}`;
+const externalUrl = process.env.RENDER_EXTERNAL_URL;
+const port = externalUrl && process.env.PORT ? parseInt(process.env.PORT) : 3000;
+const baseURL = externalUrl || `https://localhost:${port}`;
 
 const checkJwt = auth({
   audience: process.env.API_IDENTIFIER,
@@ -30,7 +31,15 @@ app.use(function (req, res, next) {
   next(err);
 });
 
-http.createServer(app)
+if (externalUrl) {
+  const hostname = '0.0.0.0';
+  app.listen(port, hostname, () => {
+    console.log(`Server locally running at http://${hostname}:${port}/ and from
+    outside on ${externalUrl}`);
+  });
+} else {
+  http.createServer(app)
   .listen(port, () => {
     console.log(`Listening on ${baseURL}`);
   });
+}
