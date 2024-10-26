@@ -34,7 +34,7 @@ router.get('/getTickets/ticket/:ticketID', async (req: Request, res: Response) =
 
 router.post('/createTicket', async (req: Request, res: Response) => {
     let ticket: Ticket = req.body;
-    let baseUrl = "http://localhost:3050";
+    let baseUrl = "https://frontend-7cgq.onrender.com";
     if(!(ticket.vatin && ticket.firstName && ticket.lastName)) {
         res.status(400).send("Incomplete information");
     } else {

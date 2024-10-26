@@ -10,13 +10,13 @@ dotenv.config()
 const app = express();
 app.use(express.json());
 
-// app.use(cors({
-//   origin: 'http://localhost:3050'
-// }));
-
 const externalUrl = process.env.RENDER_EXTERNAL_URL;
 const port = externalUrl && process.env.PORT ? parseInt(process.env.PORT) : 3000;
 const baseURL = externalUrl || `https://localhost:${port}`;
+
+// app.use(cors({
+//   origin: 'http://localhost:3050'
+// }));
 
 const checkJwt = auth({
   audience: process.env.API_IDENTIFIER,
