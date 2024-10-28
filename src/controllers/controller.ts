@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { loadAllTickets, loadTicketsByUserID, loadTicketByID, saveTicket } from '../database';
 import { Ticket } from '../models/ticket';
 import { generateQRcode } from '../utils/qr_generator';
+import { requiresAuth } from 'express-openid-connect';
 
 const router = Router();
 
@@ -34,7 +35,7 @@ router.get('/getTickets/ticket/:ticketID', async (req: Request, res: Response) =
 
 router.post('/createTicket', async (req: Request, res: Response) => {
     let ticket: Ticket = req.body;
-    let baseUrl = "https://frontend-7cgq.onrender.com";
+    let baseUrl = "http://193.198.53.212:3050/tickets/";
     if(!(ticket.vatin && ticket.firstName && ticket.lastName)) {
         res.status(400).send("Incomplete information");
     } else {
@@ -45,7 +46,8 @@ router.post('/createTicket', async (req: Request, res: Response) => {
             ticket = await saveTicket(ticket!);
             let qrCode = await generateQRcode(baseUrl, ticket!.ticketId!);
             res.json({
-                data: qrCode
+                data: qrCode,
+                url: baseUrl + ticket!.ticketId!
             });
         }
     }
